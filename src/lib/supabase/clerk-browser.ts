@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -11,8 +11,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  */
 export function useClerkSupabase(): SupabaseClient {
   const { getToken } = useAuth();
-  const getTokenRef = useRef(getToken);
-  getTokenRef.current = getToken;
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -29,11 +27,11 @@ export function useClerkSupabase(): SupabaseClient {
       global: {
         fetch: async (input, init) => {
           const headers = new Headers(init?.headers);
-          const token = await getTokenRef.current({ template: "supabase" });
+          const token = await getToken({ template: "supabase" });
           if (token) headers.set("Authorization", `Bearer ${token}`);
           return fetch(input, { ...init, headers });
         },
       },
     });
-  }, [url, key]);
+  }, [url, key, getToken]);
 }

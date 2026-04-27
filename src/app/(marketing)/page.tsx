@@ -1,10 +1,13 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Calculator,
+  Camera,
   FileSpreadsheet,
   Gem,
   MapPin,
+  Save,
   TrendingUp,
   Sparkles,
   Zap,
@@ -34,13 +37,21 @@ const features = [
 export default function HomePage() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-white/10 bg-stone-950">
+      <section className="relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-sky-950/40 via-stone-950 to-stone-950">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           aria-hidden
           style={{
             backgroundImage:
               "radial-gradient(circle at 20% 25%, rgba(56, 189, 248, 0.16), transparent 45%), radial-gradient(circle at 70% 15%, rgba(168, 85, 247, 0.14), transparent 42%), radial-gradient(circle at 50% 80%, rgba(34, 197, 94, 0.10), transparent 45%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-70"
+          aria-hidden
+          style={{
+            backgroundImage:
+              "linear-gradient(115deg, rgba(34,211,238,0.16), rgba(12,10,9,0) 45%, rgba(12,10,9,0.85))",
           }}
         />
         <div
@@ -59,24 +70,35 @@ export default function HomePage() {
                 InvestFlow — SaaS d’investissement immobilier
               </p>
               <h1 className="font-display mx-auto max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl sm:leading-tight lg:mx-0">
-                Débusquez les meilleures pépites immo avant tout le monde.
+                Prenez des décisions immo basées sur des chiffres, pas sur du
+                flair.
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/70 lg:mx-0">
-                InvestFlow scanne les annonces en temps réel et calcule votre
-                rendement net automatiquement. Arrêtez de chercher, commencez à
-                investir.
+                Le premier outil qui calcule votre fiscalité réelle (LMNP, SCI,
+                Nu) dès la première visite. Gagnez du temps, évitez les erreurs.
               </p>
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center lg:justify-start justify-center">
-                <Link
-                  href="/discover"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-stone-950 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] transition hover:bg-white/90"
-                >
-                  Lancer une recherche
-                  <ArrowRight className="size-4" aria-hidden />
-                </Link>
+              <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+                <div className="flex w-full flex-col items-center gap-2 sm:w-auto sm:items-start">
+                  <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                    <Link
+                      href="/sign-up"
+                      className="group inline-flex w-full min-w-[260px] items-center justify-center gap-2 rounded-full bg-white px-10 py-4 text-sm font-semibold text-stone-950 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.65)] transition hover:bg-white/95 hover:shadow-[0_0_0_4px_rgba(34,211,238,0.14),0_18px_60px_-22px_rgba(34,211,238,0.45)] sm:w-auto"
+                    >
+                      S’inscrire
+                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                    </Link>
+                    <span className="text-xs font-medium text-white/70">
+                      Sans carte bancaire
+                    </span>
+                  </div>
+                  <p className="text-xs font-semibold text-white/75">
+                    Déjà 250+ simulations effectuées cette semaine
+                  </p>
+                </div>
+
                 <Link
                   href="/calculateur"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white/90 backdrop-blur transition hover:bg-white/10"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white/90 backdrop-blur transition hover:bg-white/10 sm:w-auto"
                 >
                   <Calculator className="size-4" aria-hidden />
                   Calculateur gratuit
@@ -126,11 +148,13 @@ export default function HomePage() {
                     </div>
 
                     <div className="aspect-[16/10] w-full overflow-hidden bg-stone-100">
-                      <img
+                      <Image
                         src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80"
                         alt="Appartement lumineux"
                         className="h-full w-full object-cover"
-                        loading="lazy"
+                        width={1200}
+                        height={750}
+                        priority={false}
                       />
                     </div>
                   </div>
@@ -171,6 +195,57 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="border-b border-stone-200 bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-stone-900">
+              Comment ça marche
+            </h2>
+            <p className="mt-3 text-stone-600">
+              3 étapes simples pour décider plus vite, avec les bons chiffres.
+            </p>
+          </div>
+
+          <ul className="mt-12 grid gap-6 sm:grid-cols-3">
+            <li className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+              <span className="flex size-12 items-center justify-center rounded-xl bg-sky-50 text-sky-700 ring-1 ring-sky-100">
+                <Camera className="size-5" strokeWidth={1.75} aria-hidden />
+              </span>
+              <h3 className="mt-4 font-semibold text-stone-900">
+                Scannez une annonce
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-stone-600">
+                Importez le lien (ou les infos) et récupérez automatiquement les
+                données utiles.
+              </p>
+            </li>
+            <li className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+              <span className="flex size-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">
+                <Calculator className="size-5" strokeWidth={1.75} aria-hidden />
+              </span>
+              <h3 className="mt-4 font-semibold text-stone-900">
+                Calculez le Net-Net
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-stone-600">
+                Cash-flow, charges, fiscalité réelle (LMNP/SCI/Nu) et
+                rentabilité nette.
+              </p>
+            </li>
+            <li className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+              <span className="flex size-12 items-center justify-center rounded-xl bg-stone-900 text-white">
+                <Save className="size-5" strokeWidth={1.75} aria-hidden />
+              </span>
+              <h3 className="mt-4 font-semibold text-stone-900">
+                Sauvegardez sur votre Dashboard
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-stone-600">
+                Gardez vos simulations, comparez, et revenez dessus en 1 clic.
+              </p>
+            </li>
+          </ul>
         </div>
       </section>
 
