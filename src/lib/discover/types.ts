@@ -1,4 +1,10 @@
-export type DiscoverCity = "Bordeaux" | "Lyon" | "Marseille";
+export type DiscoverCity =
+  | "Bordeaux"
+  | "Lille"
+  | "Lyon"
+  | "Marseille"
+  | "Nantes"
+  | "Toulouse";
 
 export type DiscoverListingSource = "mock" | "apify";
 

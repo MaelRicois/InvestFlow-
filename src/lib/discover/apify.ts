@@ -4,13 +4,23 @@ import type { DiscoverCity, DiscoverListing } from "./types";
 export const SELOGER_MASS_PRODUCTS_ACTOR_ID =
   "azzouzana/seloger-mass-products-scraper-by-search-url";
 
-const DISCOVER_CITIES: DiscoverCity[] = ["Bordeaux", "Lyon", "Marseille"];
+const DISCOVER_CITIES: DiscoverCity[] = [
+  "Bordeaux",
+  "Lille",
+  "Lyon",
+  "Marseille",
+  "Nantes",
+  "Toulouse",
+];
 
 /** Ordre de grandeur loyer €/m²/mois (estimation marché location) pour dériver un loyer si absent de l’annonce vente. */
 const RENT_EUR_PER_M2_MONTH: Record<DiscoverCity, number> = {
   Bordeaux: 14,
+  Lille: 13.5,
   Lyon: 15.5,
   Marseille: 12.5,
+  Nantes: 13.8,
+  Toulouse: 12.5,
 };
 
 function normalizeText(s: string): string {
@@ -44,6 +54,9 @@ export function resolveDiscoverCity(
 ): DiscoverCity {
   const n = normalizeText(apiCity);
   if (n.includes("marseille")) return "Marseille";
+  if (n.includes("toulouse")) return "Toulouse";
+  if (n.includes("nantes")) return "Nantes";
+  if (n.includes("lille")) return "Lille";
   if (
     n.includes("lyon") ||
     n.includes("villeurbanne") ||

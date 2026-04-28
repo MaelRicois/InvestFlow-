@@ -211,8 +211,11 @@ export function DiscoverFeed({
                 >
                   <option value="all">Toutes</option>
                   <option value="Bordeaux">Bordeaux</option>
+                  <option value="Lille">Lille</option>
                   <option value="Lyon">Lyon</option>
                   <option value="Marseille">Marseille</option>
+                  <option value="Nantes">Nantes</option>
+                  <option value="Toulouse">Toulouse</option>
                 </select>
                 <ChevronDown
                   className="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-stone-400"

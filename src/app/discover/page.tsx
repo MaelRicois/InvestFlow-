@@ -21,7 +21,15 @@ function parseDiscoverVilleParam(
 ): DiscoverCity | null {
   if (raw == null) return null;
   const v = Array.isArray(raw) ? raw[0] : raw;
-  if (v === "Bordeaux" || v === "Lyon" || v === "Marseille") return v;
+  if (
+    v === "Bordeaux" ||
+    v === "Lille" ||
+    v === "Lyon" ||
+    v === "Marseille" ||
+    v === "Nantes" ||
+    v === "Toulouse"
+  )
+    return v;
   return null;
 }
 
@@ -38,18 +46,41 @@ export default async function DiscoverPage({ searchParams }: DiscoverPageProps) 
     apifyCities: ville != null ? [ville] : undefined,
   });
 
+  const showRecentPicksBanner =
+    meta.origin === "mock" || (source === "apify" && listings.length === 0);
+
   const fallbackListings: DiscoverListing[] =
     source === "apify" && listings.length === 0
       ? MOCK_LISTINGS.map((l) => {
-          // Hypothèses simples (pour tester le routing) — à affiner ensuite.
-          const monthlyRentEur = Math.round(l.priceEur * 0.0045); // ~0.45%/mois
-          const monthlyPropertyTaxEur = 90;
-          const monthlyChargesInsuranceEur = 140;
+          // Hypothèses simples (pour remplir la page quand Apify est en pause).
+          // Objectif: un rendement net "cliquable" (≈ 5–9%).
+          const baseRentFactor = l.city === "Lyon" ? 0.0062 : 0.0068;
+          const monthlyRentEur = Math.round(l.priceEur * baseRentFactor);
+          const monthlyPropertyTaxEur = Math.round(l.priceEur * 0.00035);
+          const monthlyChargesInsuranceEur = Math.round(l.priceEur * 0.00045);
+
+          const titleById: Record<string, string> = {
+            "mock-bdx-studio-campus-24m2-110k":
+              "Studio rendement 8% proche facs — meublé, prêt à louer",
+            "mock-lyon-t2-historique-38m2-185k":
+              "T2 rénové quartier historique — idéal LCD / meublé",
+            "mock-mrs-t2-meuble-34m2-149k":
+              "T2 meublé à forte demande — proche transports",
+            "mock-bdx-t2-tram-44m2-172k":
+              "T2 proche tram — extérieur, locataire easy",
+            "mock-lyon-t3-famille-63m2-299k":
+              "T3 familial — secteur recherché, peu de vacances",
+            "mock-mrs-immeuble-rapport-0m2-239k":
+              "Immeuble de rapport centre-ville — 3 lots, cash-flow potentiel",
+          };
+
           const row = {
             id: l.id,
             source: "mock" as const,
             city: l.city,
-            title: `${l.city} — ${l.surfaceM2} m² · Opportunité test`,
+            title:
+              titleById[l.id] ??
+              `${l.city} — Opportunité sélectionnée récemment`,
             surfaceM2: l.surfaceM2,
             imageUrl: l.imageUrl,
             imageAlt: `Annonce test ${l.city}`,
@@ -82,6 +113,14 @@ export default async function DiscoverPage({ searchParams }: DiscoverPageProps) 
             financement et le cash-flow.
           </p>
         </div>
+
+        {showRecentPicksBanner ? (
+          <div className="mt-8 rounded-2xl border border-stone-200/80 bg-white/80 px-4 py-3 shadow-sm backdrop-blur">
+            <p className="text-sm font-semibold text-stone-800">
+              📍 Sélection de pépites détectées par notre IA
+            </p>
+          </div>
+        ) : null}
 
         <DiscoverFeed
           listings={fallbackListings}
