@@ -2,28 +2,26 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 /**
- * Routes qui exigent une session. Tout le reste (dont /login, /sign-up) reste
- * public — indispensable avec routing Clerk en path sur /login : sinon
- * auth.protect redirige vers /login, qui se retrouverait à nouveau protégé → boucle.
+ * Routes publiques. Tout le reste est protégé (mais on laisse /login et /sign-up
+ * publics pour éviter une boucle de redirection).
  */
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/discover(.*)",
+  "/calculateur(.*)",
+  "/login(.*)",
+  "/sign-up(.*)",
 ]);
 
-export default clerkMiddleware(
-  async (auth, request) => {
-    if (isProtectedRoute(request)) {
-      await auth.protect({
-        unauthenticatedUrl: new URL("/login", request.url).toString(),
-      });
-    }
-
-    return await updateSession(request);
-  },
-  {
-    publicRoutes: ["/", "/discover(.*)", "/calculateur(.*)"],
+export default clerkMiddleware(async (auth, request) => {
+  if (!isPublicRoute(request)) {
+    await auth().protect({
+      unauthenticatedUrl: new URL("/login", request.url).toString(),
+    });
   }
-);
+
+  return await updateSession(request);
+});
 
 export const config = {
   matcher: [
