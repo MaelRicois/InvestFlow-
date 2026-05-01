@@ -14,12 +14,36 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "InvestFlow — SaaS immobilier premium",
-    template: "%s · InvestFlow",
-  },
+  metadataBase: new URL("https://invest-flow-seven.vercel.app/"),
+  title: "InvestFlow — Analysez votre rentabilité immo en 2 secondes",
   description:
-    "Base Next.js moderne pour un produit immobilier : App Router, Tailwind, Lucide et clients Supabase prêts à l’emploi.",
+    "L'outil gratuit pour calculer votre rendement net-net et votre fiscalité (LMNP, SCI, Nu) sans prise de tête.",
+  openGraph: {
+    title: "InvestFlow — Analysez votre rentabilité immo en 2 secondes",
+    description:
+      "L'outil gratuit pour calculer votre rendement net-net et votre fiscalité (LMNP, SCI, Nu) sans prise de tête.",
+    url: "https://invest-flow-seven.vercel.app/",
+    siteName: "InvestFlow",
+    type: "website",
+    images: [
+      {
+        // Image stable (Unsplash) pour l’aperçu social.
+        url: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&h=630&q=80",
+        width: 1200,
+        height: 630,
+        alt: "Immeuble haussmannien",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "InvestFlow — Analysez votre rentabilité immo en 2 secondes",
+    description:
+      "L'outil gratuit pour calculer votre rendement net-net et votre fiscalité (LMNP, SCI, Nu) sans prise de tête.",
+    images: [
+      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&h=630&q=80",
+    ],
+  },
 };
 
 export default function RootLayout({
