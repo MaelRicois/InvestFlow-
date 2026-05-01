@@ -74,23 +74,29 @@ export default function HomePage() {
                 flair.
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/70 lg:mx-0">
-                Le premier outil qui calcule votre fiscalité réelle (LMNP, SCI,
-                Nu) dès la première visite. Gagnez du temps, évitez les erreurs.
+                Analysez une annonce en quelques minutes : cash-flow, rendement net
+                et fiscalité (LMNP, SCI, Nu). Gagnez du temps, évitez les erreurs.
               </p>
               <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
                 <div className="flex w-full flex-col items-center gap-2 sm:w-auto sm:items-start">
                   <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                     <Link
-                      href="/sign-up"
+                      href="/discover"
                       className="group inline-flex w-full min-w-[260px] items-center justify-center gap-2 rounded-full bg-white px-10 py-4 text-sm font-semibold text-stone-950 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.65)] transition hover:bg-white/95 hover:shadow-[0_0_0_4px_rgba(34,211,238,0.14),0_18px_60px_-22px_rgba(34,211,238,0.45)] sm:w-auto"
                     >
-                      S’inscrire
+                      Découvrir les pépites
                       <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
                     </Link>
                     <span className="text-xs font-medium text-white/70">
-                      Sans carte bancaire
+                      Sans compte requis
                     </span>
                   </div>
+                  <Link
+                    href="/calculateur"
+                    className="text-xs font-semibold text-sky-200/90 underline decoration-white/30 underline-offset-4 transition hover:text-white hover:decoration-white/60"
+                  >
+                    Tester sans compte
+                  </Link>
                   <p className="text-xs font-semibold text-white/75">
                     Déjà 250+ simulations effectuées cette semaine
                   </p>

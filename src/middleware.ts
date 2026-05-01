@@ -8,18 +8,22 @@ import { updateSession } from "@/lib/supabase/middleware";
  */
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
-  "/calculateur(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, request) => {
-  if (isProtectedRoute(request)) {
-    await auth.protect({
-      unauthenticatedUrl: new URL("/login", request.url).toString(),
-    });
-  }
+export default clerkMiddleware(
+  async (auth, request) => {
+    if (isProtectedRoute(request)) {
+      await auth.protect({
+        unauthenticatedUrl: new URL("/login", request.url).toString(),
+      });
+    }
 
-  return await updateSession(request);
-});
+    return await updateSession(request);
+  },
+  {
+    publicRoutes: ["/", "/discover(.*)", "/calculateur(.*)"],
+  }
+);
 
 export const config = {
   matcher: [
