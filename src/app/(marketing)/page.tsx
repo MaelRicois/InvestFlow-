@@ -70,21 +70,24 @@ export default function HomePage() {
                 InvestFlow — SaaS d’investissement immobilier
               </p>
               <h1 className="font-display mx-auto max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl sm:leading-tight lg:mx-0">
-                Prenez des décisions immo basées sur des chiffres, pas sur du
-                flair.
+                <span className="bg-gradient-to-r from-yellow-200 via-white to-yellow-200 bg-clip-text text-transparent">
+                  Calculez votre rentabilité nette et votre fiscalité en 30
+                  secondes.
+                </span>
               </h1>
-              <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/70 lg:mx-0">
-                Analysez une annonce en quelques minutes : cash-flow, rendement net
-                et fiscalité (LMNP, SCI, Nu). Gagnez du temps, évitez les erreurs.
+              <p className="mx-auto mt-6 max-w-2xl text-xl leading-relaxed text-white/80 lg:mx-0">
+                Analysez n&apos;importe quelle annonce immo : cash-flow, LMNP, SCI ou
+                Nu. Prenez des décisions basées sur des chiffres, plus sur du
+                flair.
               </p>
-              <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+              <div className="mt-10 flex flex-col items-center sm:items-start lg:items-start">
                 <div className="flex w-full flex-col items-center gap-2 sm:w-auto sm:items-start">
                   <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                     <Link
-                      href="/discover"
+                      href="/calculateur"
                       className="group inline-flex w-full min-w-[260px] items-center justify-center gap-2 rounded-full bg-white px-10 py-4 text-sm font-semibold text-stone-950 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.65)] transition hover:bg-white/95 hover:shadow-[0_0_0_4px_rgba(34,211,238,0.14),0_18px_60px_-22px_rgba(34,211,238,0.45)] sm:w-auto"
                     >
-                      Découvrir les pépites
+                      Analyser une annonce maintenant
                       <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
                     </Link>
                     <span className="text-xs font-medium text-white/70">
@@ -101,14 +104,6 @@ export default function HomePage() {
                     Déjà 250+ simulations effectuées cette semaine
                   </p>
                 </div>
-
-                <Link
-                  href="/calculateur"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white/90 backdrop-blur transition hover:bg-white/10 sm:w-auto"
-                >
-                  <Calculator className="size-4" aria-hidden />
-                  Calculateur gratuit
-                </Link>
               </div>
 
               <div className="mt-14 grid gap-4 sm:grid-cols-3 lg:pr-10">
