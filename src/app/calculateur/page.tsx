@@ -8,7 +8,6 @@ import {
   Banknote,
   Calculator,
   CreditCard,
-  FileDown,
   Home,
   Percent,
   TrendingUp,
@@ -131,7 +130,14 @@ function CalculateurPageContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [shareCopied, setShareCopied] = useState(false);
+  const [shareClipboardError, setShareClipboardError] = useState<string | null>(
+    null
+  );
   const lastHydratedQueryRef = useRef<string | null>(null);
+  const shareCopiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   async function handleAnalyzeListing() {
     const text = listingText.trim();
@@ -230,6 +236,14 @@ function CalculateurPageContent() {
     if (charges != null && charges !== "")
       setMonthlyChargesInsurance(charges);
   }, [searchParams]);
+
+  useEffect(() => {
+    return () => {
+      if (shareCopiedTimeoutRef.current != null) {
+        clearTimeout(shareCopiedTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const numbers = useMemo(() => {
     const achatPrix = parseNumber(purchaseNetSeller);
@@ -335,6 +349,75 @@ function CalculateurPageContent() {
     taxRegime,
     tmiPct,
   ]);
+
+  const fiscalConseilSummary = useMemo(() => {
+    const annual = {
+      reel_nu: numbers.impotsNuReel * 12,
+      lmnp_amort: numbers.impotsLmnp * 12,
+    } as const;
+
+    const regimeLabel =
+      taxRegime === "lmnp_amort"
+        ? "LMNP"
+        : taxRegime === "reel_nu"
+          ? "Nu réel"
+          : taxRegime === "micro_foncier"
+            ? "Micro-foncier"
+            : "SCI IS";
+
+    if (taxRegime !== "reel_nu" && taxRegime !== "lmnp_amort") {
+      return `Régime : ${regimeLabel} (TMI ${tmiPct}%). Ouvrez le calculateur pour comparer Nu réel et LMNP.`;
+    }
+
+    const current =
+      taxRegime === "reel_nu" ? annual.reel_nu : annual.lmnp_amort;
+    const competitors = [
+      { key: "reel_nu" as const, label: "Nu réel", value: annual.reel_nu },
+      { key: "lmnp_amort" as const, label: "LMNP", value: annual.lmnp_amort },
+    ].filter((r) => r.key !== taxRegime);
+    const best = competitors.reduce(
+      (acc, r) => (r.value < acc.value ? r : acc),
+      competitors[0]!
+    );
+    const diff = current - best.value;
+    if (!Number.isFinite(diff) || diff <= 0) {
+      return `Avec ces hypothèses, le régime ${regimeLabel} n’est pas moins bon fiscalement que ${best.label}.`;
+    }
+    return `En basculant vers ${best.label}, économie estimée d’environ ${formatEUR(diff)}/an d’impôts par rapport à ${regimeLabel}.`;
+  }, [
+    numbers.impotsLmnp,
+    numbers.impotsNuReel,
+    taxRegime,
+    tmiPct,
+  ]);
+
+  async function handleShare() {
+    const name = projectName.trim() || "Projet sans nom";
+    const text = [
+      `Projet : ${name}`,
+      `Cash-flow : ${formatEUR(numbers.cashflowNetNet)} / mois (net-net)`,
+      `Renta : ${formatPct(numbers.rendementNet)}`,
+      `Conseil : ${fiscalConseilSummary}`,
+      `Lien : https://invest-flow-seven.vercel.app/`,
+    ].join("\n");
+
+    try {
+      setShareClipboardError(null);
+      await navigator.clipboard.writeText(text);
+      if (shareCopiedTimeoutRef.current != null) {
+        clearTimeout(shareCopiedTimeoutRef.current);
+      }
+      setShareCopied(true);
+      shareCopiedTimeoutRef.current = setTimeout(() => {
+        setShareCopied(false);
+        shareCopiedTimeoutRef.current = null;
+      }, 2200);
+    } catch {
+      setShareClipboardError(
+        "Copie impossible — vérifiez les permissions du navigateur."
+      );
+    }
+  }
 
   async function handleSave() {
     setIsSaving(true);
@@ -598,25 +681,25 @@ function CalculateurPageContent() {
                       placeholder="Immeuble Libourne"
                     />
                   </Field>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-                      <button
-                        type="button"
-                        onClick={handleSave}
-                        disabled={isSaving || projectName.trim().length === 0}
-                        className={cx(
-                          "h-11 rounded-xl px-4 text-sm font-semibold shadow-sm transition-colors",
-                          "bg-stone-900 text-amber-50 hover:bg-stone-800",
-                          "disabled:cursor-not-allowed disabled:opacity-60",
-                          "sm:min-w-0 sm:flex-1"
-                        )}
-                      >
-                        {isSaving
-                          ? "Sauvegarde..."
-                          : editingPropertyId != null
-                            ? "Mettre à jour"
-                            : "Sauvegarder"}
-                      </button>
+                  <div className="flex flex-col gap-3">
+                    <button
+                      type="button"
+                      onClick={handleSave}
+                      disabled={isSaving || projectName.trim().length === 0}
+                      className={cx(
+                        "inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold shadow-sm transition-colors",
+                        "bg-stone-900 text-amber-50 hover:bg-stone-800",
+                        "disabled:cursor-not-allowed disabled:opacity-60"
+                      )}
+                    >
+                      {isSaving
+                        ? "Sauvegarde..."
+                        : editingPropertyId != null
+                          ? "Mettre à jour"
+                          : "Sauvegarder"}
+                    </button>
+
+                    <div className="flex flex-row gap-3">
                       <button
                         type="button"
                         onClick={handleGenerateBankPdf}
@@ -624,18 +707,50 @@ function CalculateurPageContent() {
                           isPdfGenerating || projectName.trim().length === 0
                         }
                         className={cx(
-                          "inline-flex h-11 items-center justify-center gap-2 rounded-xl border-2 px-4 text-sm font-semibold transition-colors",
-                          "border-[#1a365d] bg-white text-[#1a365d] hover:bg-slate-50",
-                          "disabled:cursor-not-allowed disabled:opacity-60",
-                          "sm:min-w-0 sm:flex-1"
+                          "inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border-2 border-blue-600 bg-white px-3 py-3 text-sm font-semibold text-blue-700 transition-colors",
+                          "hover:bg-blue-50/80",
+                          "disabled:cursor-not-allowed disabled:opacity-60"
                         )}
                       >
-                        <FileDown className="size-4 shrink-0" aria-hidden />
-                        {isPdfGenerating
-                          ? "Génération..."
-                          : "Générer le Dossier Bancaire"}
+                        <span className="shrink-0 text-base leading-none" aria-hidden>
+                          📄
+                        </span>
+                        <span className="truncate">
+                          {isPdfGenerating ? "Génération…" : "Dossier PDF"}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleShare}
+                        className={cx(
+                          "inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-orange-400 px-3 py-3 text-sm font-semibold text-white shadow-sm transition-colors",
+                          "hover:bg-orange-500",
+                          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                        )}
+                      >
+                        <span className="shrink-0 text-base leading-none" aria-hidden>
+                          🔗
+                        </span>
+                        <span className="truncate">Partager</span>
                       </button>
                     </div>
+                    {shareCopied ? (
+                      <p
+                        className="rounded-lg border border-emerald-200/80 bg-emerald-50/90 px-3 py-2 text-center text-xs font-medium text-emerald-800 sm:text-left"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        Copié — le résumé est dans le presse-papier.
+                      </p>
+                    ) : null}
+                    {shareClipboardError ? (
+                      <p
+                        className="rounded-lg border border-rose-200/80 bg-rose-50/90 px-3 py-2 text-center text-xs font-medium text-rose-800 sm:text-left"
+                        role="alert"
+                      >
+                        {shareClipboardError}
+                      </p>
+                    ) : null}
                     {saveError ? (
                       <pre className="whitespace-pre-wrap rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
                         {saveError}
