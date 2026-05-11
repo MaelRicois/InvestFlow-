@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useClerkSupabase } from "@/lib/supabase/clerk-browser";
 import { MapPin, Trash2, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildCalculateurHrefFromProperty } from "@/lib/dashboard/calculateur-href";
+import { buildProjectDetailHref } from "@/lib/dashboard/calculateur-href";
 import type { DashboardPropertyRow } from "@/lib/dashboard/types";
 
 export type DashboardProperty = DashboardPropertyRow;
@@ -82,20 +82,18 @@ export function PropertyCard({ property }: { property: DashboardProperty }) {
               Projet
             </p>
             <Link
-              href={buildCalculateurHrefFromProperty(property)}
+              href={buildProjectDetailHref(property)}
               className="font-display block text-lg font-semibold leading-snug text-stone-900 underline-offset-4 transition-colors hover:text-amber-900 hover:underline"
             >
               {displayName}
             </Link>
-            {city ? (
-              <p className="flex items-center gap-1.5 text-sm text-stone-500">
-                <MapPin
-                  className="size-3.5 shrink-0 text-stone-400"
-                  aria-hidden
-                />
-                {city}
-              </p>
-            ) : null}
+            <p className="flex items-center gap-1.5 text-sm text-stone-500">
+              <MapPin
+                className="size-3.5 shrink-0 text-stone-400"
+                aria-hidden
+              />
+              <span className="truncate">{city ?? "Non renseignée"}</span>
+            </p>
           </div>
           <button
             type="button"
@@ -134,7 +132,7 @@ export function PropertyCard({ property }: { property: DashboardProperty }) {
 
         <div className="flex items-center justify-between gap-3 border-t border-stone-100 pt-4">
           <span className="text-xs font-medium uppercase tracking-wide text-stone-400">
-            Rendement net
+            Rentabilité nette
           </span>
           <span className="inline-flex items-center gap-1.5 text-sm font-semibold tabular-nums text-stone-800">
             <TrendingUp

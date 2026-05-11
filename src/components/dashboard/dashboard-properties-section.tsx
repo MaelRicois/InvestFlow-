@@ -13,7 +13,7 @@ import {
   formatPct,
   toNum,
 } from "@/lib/dashboard/format";
-import { buildCalculateurHrefFromProperty } from "@/lib/dashboard/calculateur-href";
+import { buildProjectDetailHref } from "@/lib/dashboard/calculateur-href";
 
 type Props = {
   rows: DashboardPropertyRow[];
@@ -128,7 +128,7 @@ export function DashboardPropertiesSection({ rows }: Props) {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Link
-                          href={buildCalculateurHrefFromProperty(p)}
+                          href={buildProjectDetailHref(p)}
                           className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-white/90 transition hover:border-emerald-400/25 hover:bg-emerald-500/[0.07]"
                         >
                           Détails
@@ -215,7 +215,7 @@ function PropertyMobileCard({ p }: { p: DashboardPropertyRow }) {
           </p>
         </div>
         <Link
-          href={buildCalculateurHrefFromProperty(p)}
+          href={buildProjectDetailHref(p)}
           className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-xs font-semibold text-white/90 transition hover:border-sky-400/30 hover:bg-sky-500/10 sm:w-auto"
         >
           Détails

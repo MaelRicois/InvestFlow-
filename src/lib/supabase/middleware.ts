@@ -1,17 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { resolvePublicSupabaseEnv } from "@/lib/supabase/env";
 
 export async function updateSession(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
+  let supabaseUrl: string;
+  let supabaseAnonKey: string;
+  try {
+    ({ supabaseUrl, supabaseAnonKey } = resolvePublicSupabaseEnv());
+  } catch {
     return NextResponse.next({ request });
   }
 
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient(url, key, {
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

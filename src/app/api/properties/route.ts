@@ -17,6 +17,7 @@ function parseCreditType(raw: unknown): CreditType {
 
 type PropertyPayload = {
   name?: string;
+  city?: string;
   purchase_price?: number;
   monthly_rent?: number;
   charges_monthly?: number;
@@ -64,12 +65,16 @@ export async function POST(request: Request) {
     creditType,
   });
 
+  const city =
+    typeof body.city === "string" ? body.city.trim() : "";
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("properties")
     .insert({
       user_id: userId,
       name: (body.name ?? "").trim() || "Nouveau bien",
+      ...(city ? { city } : {}),
       purchase_price: purchase,
       renovation_cost: metrics.renovation_cost,
       notary_fees: metrics.notary_fees,

@@ -1,3 +1,8 @@
+/**
+ * Ligne `public.properties` (Supabase).
+ * Cash-flow mensuel : colonne **`monthly_cashflow`** (pas `cash_flow`).
+ * Rendement net (%) : colonne **`net_yield`** (pas `yield`).
+ */
 export type DashboardPropertyRow = {
   id: number;
   name: string | null;
@@ -10,4 +15,5 @@ export type DashboardPropertyRow = {
   net_yield: number | string | null;
   credit_type?: string | null;
   city?: string | null;
+  created_at?: string | null;
 };

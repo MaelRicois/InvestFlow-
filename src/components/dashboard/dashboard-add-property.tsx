@@ -23,6 +23,7 @@ export function DashboardAddProperty() {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
+  const [city, setCity] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
   const [monthlyRent, setMonthlyRent] = useState("");
   const [charges, setCharges] = useState("");
@@ -31,6 +32,7 @@ export function DashboardAddProperty() {
 
   function reset() {
     setName("");
+    setCity("");
     setPurchasePrice("");
     setMonthlyRent("");
     setCharges("");
@@ -54,6 +56,7 @@ export function DashboardAddProperty() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
+          city: city.trim(),
           purchase_price: parseNumber(purchasePrice),
           monthly_rent: parseNumber(monthlyRent),
           charges_monthly: parseNumber(charges),
@@ -84,13 +87,13 @@ export function DashboardAddProperty() {
           className="inline-flex h-11 items-center justify-center gap-2 self-start rounded-xl bg-white px-5 text-sm font-semibold text-stone-950 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.65)] transition hover:bg-white/90 sm:self-auto"
         >
           <PlusCircle className="size-4 shrink-0 opacity-90" aria-hidden />
-          Ajouter un bien
+          Ajouter un projet
         </button>
         <Link
           href="/calculateur"
           className="inline-flex h-11 items-center justify-center self-start rounded-xl border border-white/15 bg-white/[0.04] px-5 text-sm font-semibold text-white/90 transition hover:bg-white/[0.08] sm:self-auto"
         >
-          Simulateur complet
+          Ouvrir le calculateur
         </Link>
       </div>
 
@@ -119,11 +122,11 @@ export function DashboardAddProperty() {
                   id="add-property-title"
                   className="font-display text-lg font-semibold text-white"
                 >
-                  Nouveau bien
+                  Nouveau projet
                 </h2>
                 <p className="mt-1 text-sm text-white/55">
-                  Saisissez les données principales : le cash-flow et le
-                  rendement sont calculés automatiquement.
+                  Saisissez les données principales : le cash-flow et la
+                  rentabilité nette sont calculés automatiquement.
                 </p>
               </div>
               <button
@@ -139,13 +142,24 @@ export function DashboardAddProperty() {
             <form onSubmit={handleSubmit} className="space-y-5 px-6 py-6">
               <div>
                 <label className="block text-sm font-medium text-white/80">
-                  Nom du bien
+                  Nom du projet
                 </label>
                 <input
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="ex. Immeuble Centre-ville"
+                  className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-emerald-400/40 focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white/80">
+                  Ville (optionnel)
+                </label>
+                <input
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="ex. Bordeaux"
                   className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-emerald-400/40 focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
@@ -244,7 +258,7 @@ export function DashboardAddProperty() {
                   disabled={pending}
                   className="h-11 rounded-xl bg-emerald-500/90 px-6 text-sm font-semibold text-stone-950 transition hover:bg-emerald-400 disabled:opacity-50"
                 >
-                  {pending ? "Enregistrement…" : "Enregistrer le bien"}
+                  {pending ? "Enregistrement…" : "Enregistrer le projet"}
                 </button>
               </div>
             </form>
