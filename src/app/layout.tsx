@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const inter = Inter({
@@ -49,6 +50,7 @@ export default function RootLayout({
       >
         <body className="min-h-full flex flex-col bg-background font-sans text-foreground">
           {children}
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
