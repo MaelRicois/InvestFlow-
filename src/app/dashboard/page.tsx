@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Activity, FileText } from "lucide-react";
 import { DashboardAddProperty } from "@/components/dashboard/dashboard-add-property";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { DashboardSupabaseEnvLog } from "@/components/dashboard/dashboard-supabase-env-log";
+import type { AccountingTransaction } from "@/lib/portfolio/accounting";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardExports } from "@/components/dashboard/dashboard-exports";
@@ -50,6 +52,8 @@ export default async function DashboardPage() {
   }
 
   let rows: DashboardPropertyRow[] = [];
+  let transactions: AccountingTransaction[] = [];
+  let annualSalary: number | null = null;
   let loadError: string | null = null;
 
   try {
@@ -78,6 +82,40 @@ export default async function DashboardPage() {
       }
     } else {
       rows = (data ?? []) as DashboardPropertyRow[];
+    }
+
+    if (rows.length > 0) {
+      const propertyIds = rows.map((r) => r.id);
+      const nameById = new Map(
+        rows.map((r) => [r.id, r.name?.trim() || `Projet #${r.id}`])
+      );
+
+      const { data: txnData } = await supabase
+        .from("property_transactions")
+        .select("id, property_id, occurred_on, label, amount, category")
+        .in("property_id", propertyIds)
+        .order("occurred_on", { ascending: false });
+
+      transactions = (txnData ?? []).map((t) => ({
+        id: Number(t.id),
+        property_id: Number(t.property_id),
+        property_name: nameById.get(Number(t.property_id)) ?? "Projet",
+        occurred_on: String(t.occurred_on),
+        label: String(t.label),
+        amount: Number(t.amount),
+        category: t.category != null ? String(t.category) : null,
+      }));
+    }
+
+    const { data: profileData } = await supabase
+      .from("user_profiles")
+      .select("annual_salary")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (profileData?.annual_salary != null) {
+      const s = Number(profileData.annual_salary);
+      annualSalary = Number.isFinite(s) ? s : null;
     }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -169,7 +207,12 @@ export default async function DashboardPage() {
             </div>
           ) : null}
 
-          <div className="mt-10">
+          <DashboardShell
+            rows={rows}
+            transactions={transactions}
+            annualSalary={annualSalary}
+          >
+            <div className="mt-2">
             <DashboardStats
               totalCashflowMensuel={totalCashflowMensuel}
               valeurPatrimoine={valeurPatrimoine}
@@ -222,9 +265,9 @@ export default async function DashboardPage() {
                 ))}
               </div>
             )}
-          </section>
+            </section>
 
-          <section className="mt-14 grid gap-8 lg:grid-cols-3 lg:gap-10">
+            <section className="mt-14 grid gap-8 lg:grid-cols-3 lg:gap-10">
             <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur lg:col-span-1">
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -263,6 +306,7 @@ export default async function DashboardPage() {
               </div>
             </div>
           </section>
+          </DashboardShell>
         </div>
       </div>
     </main>

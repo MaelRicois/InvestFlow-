@@ -16,4 +16,6 @@ export type DashboardPropertyRow = {
   credit_type?: string | null;
   city?: string | null;
   created_at?: string | null;
+  total_project_cost?: number | string | null;
+  notary_fees?: number | string | null;
 };
